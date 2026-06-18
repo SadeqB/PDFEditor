@@ -1,0 +1,389 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Free Online PDF Editor - Edit, Sign, Highlight and Organize PDFs</title>
+    <meta name="description" content="Free browser-based PDF editor for adding text, images, signatures, drawings, highlights, shapes, page rotation, page extraction, and PDF page insertion.">
+    <meta name="keywords" content="free PDF editor, online PDF editor, edit PDF, sign PDF, highlight PDF, add text to PDF, draw on PDF, rotate PDF pages, extract PDF pages, insert PDF pages">
+    <meta name="robots" content="index, follow, max-image-preview:large">
+    <meta name="author" content="PDF Editor">
+    <meta name="theme-color" content="#0f766e">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Free Online PDF Editor">
+    <meta property="og:description" content="Edit PDF files in your browser with text, images, signatures, highlights, drawings, shapes, and page tools.">
+    <meta property="og:site_name" content="Free Online PDF Editor">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Free Online PDF Editor">
+    <meta name="twitter:description" content="A free browser-based PDF editor with text, drawing, signature, image, shape, highlight, and page editing tools.">
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "Free Online PDF Editor",
+        "applicationCategory": "BusinessApplication",
+        "operatingSystem": "Web",
+        "description": "A free browser-based PDF editor for adding text, images, signatures, drawings, highlights, shapes, rotating pages, extracting pages, and inserting pages from another PDF.",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        },
+        "featureList": [
+          "Add text to PDF files",
+          "Edit visible PDF text with overlays",
+          "Add images and signatures",
+          "Draw with pen, pencil, and highlighter tools",
+          "Add geometric shapes and arrows",
+          "Highlight PDF content",
+          "Rotate, remove, move, insert, and extract PDF pages",
+          "Download the edited PDF"
+        ]
+      }
+    </script>
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar" aria-label="Document controls">
+        <div class="brand">
+          <div class="brand-mark">P</div>
+          <div>
+            <h1>Free PDF Editor</h1>
+            <p id="fileName">No document loaded</p>
+          </div>
+        </div>
+
+        <label class="dropzone" id="dropzone">
+          <input id="fileInput" type="file" accept="application/pdf">
+          <span class="drop-icon" data-lucide="file-up"></span>
+          <strong>Drop a PDF here</strong>
+          <small>or click to choose a file</small>
+        </label>
+
+        <div class="tool-group">
+          <h2>View</h2>
+          <div class="step-row">
+            <button class="icon-button" id="prevPage" title="Previous page" aria-label="Previous page">
+              <i data-lucide="chevron-left"></i>
+            </button>
+            <input id="pageNumber" type="number" min="1" value="1" aria-label="Page number">
+            <span id="pageCount">/ 0</span>
+            <button class="icon-button" id="nextPage" title="Next page" aria-label="Next page">
+              <i data-lucide="chevron-right"></i>
+            </button>
+          </div>
+          <div class="step-row">
+            <button class="icon-button" id="zoomOut" title="Zoom out" aria-label="Zoom out">
+              <i data-lucide="zoom-out"></i>
+            </button>
+            <span class="metric" id="zoomLabel">100%</span>
+            <button class="icon-button" id="zoomIn" title="Zoom in" aria-label="Zoom in">
+              <i data-lucide="zoom-in"></i>
+            </button>
+            <button class="icon-button" id="rotatePage" title="Rotate page" aria-label="Rotate page">
+              <i data-lucide="rotate-cw"></i>
+            </button>
+          </div>
+        </div>
+
+        <details class="tool-group collapsible" open>
+          <summary>
+            <span>Tools</span>
+            <i data-lucide="chevron-down"></i>
+          </summary>
+          <div class="tool-grid" role="toolbar" aria-label="Editing tools">
+            <button class="tool active" data-tool="select" title="Select and move">
+              <i data-lucide="mouse-pointer-2"></i><span>Select</span>
+            </button>
+            <button class="tool" data-tool="text" title="Add text">
+              <i data-lucide="type"></i><span>Text</span>
+            </button>
+            <button class="tool" data-tool="edit" title="Edit existing text">
+              <i data-lucide="text-cursor-input"></i><span>Edit</span>
+            </button>
+            <button class="tool" data-tool="image" title="Add picture">
+              <i data-lucide="image-plus"></i><span>Image</span>
+            </button>
+            <button class="tool" data-tool="pen" title="Pen">
+              <i data-lucide="pen-line"></i><span>Pen</span>
+            </button>
+            <button class="tool" data-tool="pencil" title="Pencil">
+              <i data-lucide="pencil"></i><span>Pencil</span>
+            </button>
+            <button class="tool" data-tool="highlight" title="Highlight">
+              <i data-lucide="highlighter"></i><span>Mark</span>
+            </button>
+            <button class="tool" data-tool="line" title="Line">
+              <i data-lucide="minus"></i><span>Line</span>
+            </button>
+            <button class="tool" data-tool="arrow" title="Arrow">
+              <i data-lucide="move-up-right"></i><span>Arrow</span>
+            </button>
+            <button class="tool" data-tool="rect" title="Rectangle">
+              <i data-lucide="square"></i><span>Rect</span>
+            </button>
+            <button class="tool" data-tool="ellipse" title="Ellipse">
+              <i data-lucide="circle"></i><span>Oval</span>
+            </button>
+            <button class="tool" data-tool="triangle" title="Triangle">
+              <i data-lucide="triangle"></i><span>Tri</span>
+            </button>
+            <button class="tool" data-tool="diamond" title="Diamond">
+              <i data-lucide="diamond"></i><span>Dia</span>
+            </button>
+            <button class="tool" data-tool="pentagon" title="Pentagon">
+              <i data-lucide="pentagon"></i><span>Penta</span>
+            </button>
+            <button class="tool" data-tool="hexagon" title="Hexagon">
+              <i data-lucide="hexagon"></i><span>Hex</span>
+            </button>
+            <button class="tool" data-tool="signature" title="Signature">
+              <i data-lucide="signature"></i><span>Sign</span>
+            </button>
+            <button class="tool" data-tool="erase" title="Erase annotation">
+              <i data-lucide="eraser"></i><span>Erase</span>
+            </button>
+          </div>
+        </details>
+
+        <details class="tool-group collapsible" open>
+          <summary>
+            <span>Pages</span>
+            <i data-lucide="chevron-down"></i>
+          </summary>
+          <fieldset class="radio-row">
+            <label><input type="radio" name="pageTargetMode" value="current" checked> Current page</label>
+            <label><input type="radio" name="pageTargetMode" value="specific"> Page</label>
+          </fieldset>
+          <label class="field">
+            <span>Page number</span>
+            <input id="managePageNumber" type="number" min="1" value="1">
+          </label>
+          <div class="step-row">
+            <button class="icon-button" id="removePage" type="button" title="Remove page" aria-label="Remove page">
+              <i data-lucide="trash-2"></i>
+            </button>
+            <button class="icon-button" id="rotateManagedPageLeft" type="button" title="Rotate counter clockwise" aria-label="Rotate counter clockwise">
+              <i data-lucide="rotate-ccw"></i>
+            </button>
+            <button class="icon-button" id="rotateManagedPageRight" type="button" title="Rotate clockwise" aria-label="Rotate clockwise">
+              <i data-lucide="rotate-cw"></i>
+            </button>
+          </div>
+          <div class="step-row">
+            <button class="secondary-button" id="movePage" type="button">
+              <i data-lucide="arrow-right-left"></i><span>Move</span>
+            </button>
+            <button class="secondary-button" id="insertPages" type="button">
+              <i data-lucide="file-plus-2"></i><span>Insert</span>
+            </button>
+          </div>
+          <button class="secondary-button" id="extractPages" type="button">
+            <i data-lucide="file-down"></i><span>Extract</span>
+          </button>
+        </details>
+
+        <div class="tool-group style-panel" id="stylePanel" hidden>
+          <h2>Style</h2>
+          <input id="imageInput" type="file" accept="image/png,image/jpeg" hidden>
+          <button class="secondary-button" id="chooseImage" type="button" hidden>
+            <i data-lucide="image"></i><span>Choose picture</span>
+          </button>
+          <label class="field text-setting content-setting">
+            <span>Text</span>
+            <input id="textValue" type="text" value="New text">
+          </label>
+          <label class="field text-setting">
+            <span>Font</span>
+            <select id="fontFamily">
+              <option value="Helvetica">Helvetica</option>
+              <option value="TimesRoman">Times</option>
+              <option value="Courier">Courier</option>
+            </select>
+          </label>
+          <label class="field text-setting">
+            <span>Font size</span>
+            <input id="fontSize" type="number" min="8" max="96" value="18">
+          </label>
+          <div class="format-row text-setting" aria-label="Text style">
+            <button class="icon-button format-toggle" id="boldText" type="button" title="Bold" aria-label="Bold">
+              <i data-lucide="bold"></i>
+            </button>
+            <button class="icon-button format-toggle" id="italicText" type="button" title="Italic" aria-label="Italic">
+              <i data-lucide="italic"></i>
+            </button>
+            <button class="icon-button format-toggle" id="underlineText" type="button" title="Underline" aria-label="Underline">
+              <i data-lucide="underline"></i>
+            </button>
+          </div>
+          <label class="field non-image-setting">
+            <span>Color</span>
+            <input id="colorPicker" type="color" value="#1f2937">
+          </label>
+          <label class="field non-image-setting stroke-setting">
+            <span>Stroke</span>
+            <input id="strokeSize" type="range" min="1" max="18" value="3">
+          </label>
+          <label class="field non-image-setting stroke-setting">
+            <span>Line</span>
+            <select id="lineStyle">
+              <option value="solid">Solid</option>
+              <option value="dash">Dashed</option>
+              <option value="dot">Dotted</option>
+            </select>
+          </label>
+          <div class="dimension-row">
+            <label class="field dimension-setting">
+              <span>Width</span>
+              <input id="itemWidth" type="number" min="1" value="160">
+            </label>
+            <label class="field dimension-setting">
+              <span>Height</span>
+              <input id="itemHeight" type="number" min="1" value="40">
+            </label>
+          </div>
+          <label class="field check text-setting cover-setting">
+            <span>Cover text while editing</span>
+            <input id="coverText" type="checkbox">
+          </label>
+          <label class="field rotation-setting">
+            <span>Rotation</span>
+            <input id="itemRotation" type="number" min="-180" max="180" value="0">
+          </label>
+        </div>
+
+        <div class="action-row">
+          <button class="icon-button" id="undo" title="Undo" aria-label="Undo">
+            <i data-lucide="undo-2"></i>
+          </button>
+          <button class="icon-button" id="redo" title="Redo" aria-label="Redo">
+            <i data-lucide="redo-2"></i>
+          </button>
+          <button class="icon-button" id="closePdf" title="Close PDF" aria-label="Close PDF">
+            <i data-lucide="x"></i>
+          </button>
+          <button class="primary-button" id="downloadPdf">
+            <i data-lucide="download"></i><span>Download</span>
+          </button>
+        </div>
+      </aside>
+
+      <main class="workspace">
+        <div class="topbar">
+          <div class="status-pill" id="statusText">Ready for a PDF</div>
+          <div class="library-note">Runs in your browser with PDF.js and pdf-lib</div>
+        </div>
+        <div class="toolbar-host" id="toolbarHost" hidden></div>
+
+        <section class="document-stage" id="documentStage">
+          <div class="empty-state" id="emptyState">
+            <i data-lucide="file-text"></i>
+            <h2>Free Online PDF Editor</h2>
+            <p>Drag a file onto the page, then add text, markups, drawings, shapes, signatures, or replace visible text.</p>
+            <div class="seo-copy" aria-label="PDF editor features">
+              <p>
+                Edit PDF files directly in your browser without uploading documents to a server.
+                Add text, images, signatures, highlights, drawings, lines, arrows, rectangles,
+                circles, triangles, diamonds, pentagons, and hexagons.
+              </p>
+              <p>
+                Use page tools to rotate, remove, reorder, insert, and extract PDF pages, then
+                download the finished PDF file for free.
+              </p>
+            </div>
+          </div>
+          <div class="page-wrap" id="pageWrap" hidden>
+            <canvas id="pdfCanvas"></canvas>
+            <div class="textLayer" id="textLayer"></div>
+            <svg id="annotationLayer" class="annotation-layer"></svg>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <template id="textEditorTemplate">
+      <form class="floating-editor">
+        <textarea rows="3"></textarea>
+        <div>
+          <button type="submit">Apply</button>
+          <button type="button" data-cancel>Cancel</button>
+        </div>
+      </form>
+    </template>
+
+    <dialog class="modal" id="movePageDialog">
+      <form method="dialog" class="modal-card" id="movePageForm">
+        <h2>Move Page</h2>
+        <div class="dimension-row">
+          <label class="field">
+            <span>Move page</span>
+            <input id="movePageFrom" type="number" min="1" value="1">
+          </label>
+          <label class="field">
+            <span>Reference page</span>
+            <input id="movePageTo" type="number" min="1" value="1">
+          </label>
+        </div>
+        <fieldset class="radio-row">
+          <label><input type="radio" name="movePlacement" value="before" checked> Before reference page</label>
+          <label><input type="radio" name="movePlacement" value="after"> After reference page</label>
+        </fieldset>
+        <div class="dialog-actions">
+          <button type="button" data-close-dialog>Cancel</button>
+          <button type="submit">Move</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog class="modal" id="insertPagesDialog">
+      <form method="dialog" class="modal-card" id="insertPagesForm">
+        <h2>Insert Pages</h2>
+        <input id="insertPdfInput" type="file" accept="application/pdf" hidden>
+        <button class="secondary-button" id="chooseInsertPdf" type="button">
+          <i data-lucide="file-up"></i><span>Choose PDF</span>
+        </button>
+        <div class="status-pill" id="insertPdfName">No PDF selected</div>
+        <div class="dimension-row">
+          <label class="field">
+            <span>From page</span>
+            <input id="insertRangeStart" type="number" min="1" value="1">
+          </label>
+          <label class="field">
+            <span>To page</span>
+            <input id="insertRangeEnd" type="number" min="1" value="1">
+          </label>
+        </div>
+        <label class="field">
+          <span>Reference page</span>
+          <input id="insertAtPage" type="number" min="1" value="1">
+        </label>
+        <fieldset class="radio-row">
+          <label><input type="radio" name="insertPlacement" value="before" checked> Before reference page</label>
+          <label><input type="radio" name="insertPlacement" value="after"> After reference page</label>
+        </fieldset>
+        <div class="dialog-actions">
+          <button type="button" data-close-dialog>Cancel</button>
+          <button type="submit">Insert</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog class="modal" id="extractPagesDialog">
+      <form method="dialog" class="modal-card" id="extractPagesForm">
+        <h2>Extract Pages</h2>
+        <label class="field">
+          <span>Pages</span>
+          <input id="extractPagesSpec" type="text" value="1" placeholder="1, 3-5, 8">
+        </label>
+        <div class="dialog-actions">
+          <button type="button" data-close-dialog>Cancel</button>
+          <button type="submit">Download</button>
+        </div>
+      </form>
+    </dialog>
+
+    <script type="module" src="app.js"></script>
+  </body>
+</html>
