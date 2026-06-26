@@ -71,6 +71,7 @@ const els = {
   undo: document.getElementById("undo"),
   redo: document.getElementById("redo"),
   closePdf: document.getElementById("closePdf"),
+  unlockPdf: document.getElementById("unlockPdf"),
   downloadPdf: document.getElementById("downloadPdf"),
   managePageNumber: document.getElementById("managePageNumber"),
   movePageFrom: document.getElementById("movePageFrom"),
@@ -123,6 +124,10 @@ function pageAnnotations() {
 function normalizePageRef(ref) {
   if (typeof ref === "number") return { documentId: "main", page: ref };
   return ref || { documentId: "main", page: 1 };
+}
+
+function loadPdfBytes(bytes) {
+  return PDFDocument.load(bytes.slice(0), { ignoreEncryption: true });
 }
 
 function pageRefFor(logicalPage = state.page) {
@@ -754,7 +759,7 @@ async function extractPagesToPdf(spec) {
   for (const logicalPage of pages) {
     const ref = pageRefFor(logicalPage);
     if (!pdfLibCache.has(ref.documentId)) {
-      pdfLibCache.set(ref.documentId, await PDFDocument.load(state.documents[ref.documentId].bytes.slice(0)));
+      pdfLibCache.set(ref.documentId, await loadPdfBytes(state.documents[ref.documentId].bytes));
     }
     const sourceDoc = pdfLibCache.get(ref.documentId);
     const [copiedPage] = await outputDoc.copyPages(sourceDoc, [ref.page - 1]);
@@ -771,6 +776,42 @@ async function extractPagesToPdf(spec) {
   URL.revokeObjectURL(url);
   els.extractPagesDialog.close();
   setStatus("Extracted PDF downloaded");
+}
+
+async function unlockPdf() {
+  if (!state.fileBytes) {
+    setStatus("Open a PDF first");
+    return;
+  }
+
+  setStatus("Removing edit protection...");
+  try {
+    const outputDoc = await PDFDocument.create();
+    const pdfLibCache = new Map();
+    for (const refRaw of state.pageOrder) {
+      const ref = normalizePageRef(refRaw);
+      if (!pdfLibCache.has(ref.documentId)) {
+        pdfLibCache.set(ref.documentId, await loadPdfBytes(state.documents[ref.documentId].bytes));
+      }
+      const sourceDoc = pdfLibCache.get(ref.documentId);
+      const [copiedPage] = await outputDoc.copyPages(sourceDoc, [ref.page - 1]);
+      copiedPage.setRotation(degrees(state.pageRotations[pageKey(ref)] || 0));
+      outputDoc.addPage(copiedPage);
+    }
+
+    const output = await outputDoc.save({ useObjectStreams: false });
+    const blob = new Blob([output], { type: "application/pdf" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "unlocked.pdf";
+    link.click();
+    URL.revokeObjectURL(url);
+    setStatus("Unlocked PDF downloaded");
+  } catch (error) {
+    console.error(error);
+    setStatus("Cannot unlock this PDF without its password");
+  }
 }
 
 async function renderTextLayer(page, viewport) {
@@ -1323,7 +1364,7 @@ async function downloadPdf() {
   for (const refRaw of state.pageOrder) {
     const ref = normalizePageRef(refRaw);
     if (!pdfLibCache.has(ref.documentId)) {
-      pdfLibCache.set(ref.documentId, await PDFDocument.load(state.documents[ref.documentId].bytes.slice(0)));
+      pdfLibCache.set(ref.documentId, await loadPdfBytes(state.documents[ref.documentId].bytes));
     }
     const sourceDoc = pdfLibCache.get(ref.documentId);
     const [page] = await pdfDoc.copyPages(sourceDoc, [ref.page - 1]);
@@ -1685,6 +1726,7 @@ els.redo.addEventListener("click", () => {
   restore(state.redoStack.pop());
 });
 els.downloadPdf.addEventListener("click", downloadPdf);
+els.unlockPdf.addEventListener("click", unlockPdf);
 els.closePdf.addEventListener("click", closePdf);
 
 els.annotationLayer.addEventListener("pointerdown", beginPointer);
